@@ -1,12 +1,14 @@
-﻿using Contractor.Core.Jobs;
+﻿using Contractor.Core.Options;
 
 namespace Contractor.CLI
 {
-    public class ContractorOptions : IContractorOptions
+    internal class ContractorOptions : IContractorOptions
     {
         public string BackendDestinationFolder { get; set; }
 
         public string DbDestinationFolder { get; set; }
+
+        public string FrontendDestinationFolder { get; set; }
 
         public string ProjectName { get; set; }
 

@@ -1,17 +1,18 @@
-﻿using Contractor.Core;
-using Contractor.Core.Jobs;
+﻿using Contractor.CLI.Tools;
+using Contractor.Core;
+using Contractor.Core.Options;
 using System;
 using System.IO;
 
 namespace Contractor.CLI
 {
-    public class Relation1ToNAdditionHandler
+    internal class Relation1ToNAdditionHandler
     {
         public static void Perform(string[] args)
         {
             if (args.Length < 5)
             {
-                Console.WriteLine("Bitte geben sie alle Informationen an. Beispiel: contractor add relation 1:n Bankwesen.Bank:Banken Kundenstamm.Kunde:Kunden");
+                Console.WriteLine("Bitte geben sie alle Informationen an. Beispiel: contractor add relation 1:n Bankwesen.Bank:Banken Kundenstamm.Kunde:Kunden [-n|--alternative-property-names Vertragsbank:Vertragskunden]");
                 return;
             }
 
@@ -42,6 +43,18 @@ namespace Contractor.CLI
             options.DomainTo = entityName.Split('.')[0];
             options.EntityNameTo = entityName.Split('.')[1].Split(':')[0];
             options.EntityNamePluralTo = entityName.Split(':')[1];
+
+            if (ArgumentParser.HasArgument(args, "-n", "--alternative-property-names"))
+            {
+                string st = ArgumentParser.ExtractArgument(args, "-n", "--alternative-property-names");
+                options.PropertyNameFrom = st.Split(':')[0];
+                options.PropertyNameTo = st.Split(':')[1];
+            }
+            else
+            {
+                options.PropertyNameFrom = options.EntityNameFrom;
+                options.PropertyNameTo = options.EntityNamePluralTo;
+            }
         }
     }
 };

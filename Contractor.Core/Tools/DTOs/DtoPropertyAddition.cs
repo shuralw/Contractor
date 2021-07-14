@@ -1,11 +1,11 @@
 ﻿using Contractor.Core.Helpers;
-using Contractor.Core.Jobs;
+using Contractor.Core.Options;
 using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Contractor.Core.Tools
 {
-    public class DtoPropertyAddition
+    internal class DtoPropertyAddition
     {
         public PathService pathService;
 
@@ -19,25 +19,10 @@ namespace Contractor.Core.Tools
             AddPropertyToDTO(options, domainFolder, templateFileName, false);
         }
 
-        public void AddPropertyToDTO(IPropertyAdditionOptions options, string domainFolder, string templateFileName, string namespaceToAdd)
-        {
-            AddPropertyToDTO(options, domainFolder, templateFileName, false, namespaceToAdd);
-        }
-
         public void AddPropertyToDTO(IPropertyAdditionOptions options, string domainFolder, string templateFileName, bool forInterface)
-        {
-            AddPropertyToDTO(options, domainFolder, templateFileName, forInterface, null);
-        }
-
-        public void AddPropertyToDTO(IPropertyAdditionOptions options, string domainFolder, string templateFileName, bool forInterface, string namespaceToAdd)
         {
             string filePath = GetFilePath(options, domainFolder, templateFileName);
             string fileData = UpdateFileData(options, filePath, forInterface);
-
-            if (namespaceToAdd != null)
-            {
-                fileData = UsingStatements.Add(fileData, namespaceToAdd);
-            }
 
             CsharpClassWriter.Write(filePath, fileData);
         }
@@ -62,14 +47,9 @@ namespace Contractor.Core.Tools
 
         private string AddUsingStatements(IPropertyAdditionOptions options, string fileData)
         {
-            if (options.PropertyType.Contains("Guid") || options.PropertyType.Contains("DateTime"))
+            if (options.PropertyType == PropertyTypes.Guid || options.PropertyType == PropertyTypes.DateTime)
             {
                 fileData = UsingStatements.Add(fileData, "System");
-            }
-
-            if (options.PropertyType.Contains("Enumerable"))
-            {
-                fileData = UsingStatements.Add(fileData, "System.Collections.Generic");
             }
 
             return fileData;
@@ -91,9 +71,9 @@ namespace Contractor.Core.Tools
             }
 
             if (forInterface)
-                stringEditor.InsertLine(GetInterfaceProperty(options.PropertyType, options.PropertyName));
+                stringEditor.InsertLine(BackendDtoInterfacePropertyLine.GetPropertyLine(options));
             else
-                stringEditor.InsertLine(GetProperty(options.PropertyType, options.PropertyName));
+                stringEditor.InsertLine(BackendDtoPropertyLine.GetPropertyLine(options));
 
             return stringEditor.GetText();
         }
@@ -122,16 +102,6 @@ namespace Contractor.Core.Tools
         private bool ContainsProperty(string line)
         {
             return line.Replace(" ", "").Contains("{get;set;}");
-        }
-
-        private string GetProperty(string propertyType, string propertyName)
-        {
-            return $"        public " + propertyType + " " + propertyName + " { get; set; }";
-        }
-
-        private string GetInterfaceProperty(string propertyType, string propertyName)
-        {
-            return $"        " + propertyType + " " + propertyName + " { get; set; }";
         }
     }
 }

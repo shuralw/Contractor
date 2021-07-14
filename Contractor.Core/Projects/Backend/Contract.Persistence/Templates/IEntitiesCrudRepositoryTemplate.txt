@@ -1,0 +1,22 @@
+using System;
+using System.Collections.Generic;
+
+namespace ProjectName.Contract.Persistence.Modules.Domain.Entities
+{
+    public interface IEntitiesCrudRepository
+    {
+        void CreateEntity(IDbEntity entity);
+
+        void DeleteEntity(Guid entityId);
+
+        bool DoesEntityExist(Guid entityId);
+
+        IDbEntity GetEntity(Guid entityId);
+
+        IDbEntityDetail GetEntityDetail(Guid entityId);
+
+        IEnumerable<IDbEntity> GetEntities();
+
+        void UpdateEntity(IDbEntity entity);
+    }
+}

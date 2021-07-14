@@ -1,5 +1,5 @@
 ﻿using Contractor.CLI.Tools;
-using Contractor.Core.Jobs;
+using Contractor.Core.Options;
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace Contractor.CLI
         private static void InitializeForce(string currentFolder)
         {
             LogoWriter.Write();
-            IContractorOptions options = FindDefaultOptions(currentFolder);
+            IContractorOptions options = ContractorDefaultOptionsFinder.FindDefaultOptions(currentFolder);
             Initialize(currentFolder, options);
         }
 
@@ -34,6 +34,7 @@ namespace Contractor.CLI
         {
             options.BackendDestinationFolder = Path.GetRelativePath(currentFolder, options.BackendDestinationFolder);
             options.DbDestinationFolder = Path.GetRelativePath(currentFolder, options.DbDestinationFolder);
+            options.FrontendDestinationFolder = Path.GetRelativePath(currentFolder, options.FrontendDestinationFolder);
             string optionsJson = JsonConvert.SerializeObject(options, Formatting.Indented);
             string optionsPath = Path.Combine(currentFolder, "contractor.json");
             File.WriteAllText(optionsPath, optionsJson);
@@ -44,7 +45,7 @@ namespace Contractor.CLI
 
         private static IContractorOptions InitializeOptions(string currentFolder)
         {
-            IContractorOptions defaultOptions = FindDefaultOptions(currentFolder);
+            IContractorOptions defaultOptions = ContractorDefaultOptionsFinder.FindDefaultOptions(currentFolder);
 
             // BackendDestinationFolder
             System.Console.WriteLine($"Welches Backend-Projekt soll bearbeitet werden? (Empty = {defaultOptions.BackendDestinationFolder})");
@@ -54,7 +55,7 @@ namespace Contractor.CLI
                 defaultOptions.BackendDestinationFolder = userBackendDestinationFolder;
             }
 
-            // BackendDestinationFolder
+            // DbDestinationFolder
             System.Console.WriteLine($"Welches Datenbank-Projekt soll bearbeitet werden? (Empty = {defaultOptions.DbDestinationFolder})");
             var userDbDestinationFolder = System.Console.ReadLine().Trim();
             if (userDbDestinationFolder.Length > 0)
@@ -62,7 +63,15 @@ namespace Contractor.CLI
                 defaultOptions.DbDestinationFolder = userDbDestinationFolder;
             }
 
-            // BackendDestinationFolder
+            // FrontendDestinationFolder
+            System.Console.WriteLine($"Welches Frontend-Projekt soll bearbeitet werden? (Empty = {defaultOptions.FrontendDestinationFolder})");
+            var userFrontendDestinationFolder = System.Console.ReadLine().Trim();
+            if (userFrontendDestinationFolder.Length > 0)
+            {
+                defaultOptions.FrontendDestinationFolder = userFrontendDestinationFolder;
+            }
+
+            // ProjectName
             System.Console.WriteLine($"Wie heißt das Backend-Projekt? (Empty = {defaultOptions.ProjectName})");
             var userProjectName = System.Console.ReadLine().Trim();
             if (userProjectName.Length > 0)
@@ -70,7 +79,7 @@ namespace Contractor.CLI
                 defaultOptions.ProjectName = userProjectName;
             }
 
-            // BackendDestinationFolder
+            // DbProjectName
             System.Console.WriteLine($"Wie heißt das Datenbank-Projekt? (Empty = {defaultOptions.DbProjectName})");
             var userDbProjectName = System.Console.ReadLine().Trim();
             if (userDbProjectName.Length > 0)
@@ -79,46 +88,6 @@ namespace Contractor.CLI
             }
 
             return defaultOptions;
-        }
-
-        private static IContractorOptions FindDefaultOptions(string currentFolder)
-        {
-            string backendDestinationFolder = currentFolder;
-            string dbDestinationFolder = FindBestDbDestinationFolder(currentFolder);
-            string projectName = new DirectoryInfo(backendDestinationFolder).Name;
-            string dbProjectName = new DirectoryInfo(dbDestinationFolder).Name;
-
-            return new ContractorOptions()
-            {
-                BackendDestinationFolder = backendDestinationFolder,
-                DbDestinationFolder = dbDestinationFolder,
-                ProjectName = projectName,
-                DbProjectName = dbProjectName
-            };
-        }
-
-        private static string FindBestDbDestinationFolder(string folder)
-        {
-            DirectoryInfo di = new DirectoryInfo(folder);
-
-            var path = FindDbDestinationFolder(di.FullName);
-            if (path != null)
-                return path;
-            path = FindDbDestinationFolder(di.Parent.FullName);
-            if (path != null)
-                return path;
-            path = FindDbDestinationFolder(di.Parent.Parent.FullName);
-            if (path != null)
-                return path;
-
-            return null;
-        }
-
-        private static string FindDbDestinationFolder(string dir)
-        {
-            return Directory.GetDirectories(dir)
-                            .Where(directory => new DirectoryInfo(directory).Name.EndsWith(".DB"))
-                            .FirstOrDefault();
         }
     }
 }

@@ -1,14 +1,19 @@
-﻿using Contractor.Core.Projects.DB.ProjectFile;
-using Contractor.Core.Projects.Persistence;
-using Contractor.Core.Template.API;
-using Contractor.Core.Template.Contract;
-using Contractor.Core.Template.Logic;
+﻿using Contractor.Core.Projects.Backend.Api;
+using Contractor.Core.Projects.Backend.Contract.Logic;
+using Contractor.Core.Projects.Backend.Contract.Persistence;
+using Contractor.Core.Projects.Backend.Logic;
+using Contractor.Core.Projects.Backend.Logic.Tests;
+using Contractor.Core.Projects.Backend.Persistence;
+using Contractor.Core.Projects.Backend.Persistence.Tests;
+using Contractor.Core.Projects.Database;
+using Contractor.Core.Projects.Frontend.Model;
+using Contractor.Core.Projects.Frontend.Pages;
 using Contractor.Core.Tools;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Contractor.Core
 {
-    public class DependencyProvider
+    internal class DependencyProvider
     {
         public static ServiceProvider GetServiceProvider()
         {
@@ -19,43 +24,43 @@ namespace Contractor.Core
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddSingleton<ContractLogicProjectGeneration>();
-            serviceCollection.AddSingleton<ContractPersistenceProjectGeneration>();
-            serviceCollection.AddSingleton<ApiProjectGeneration>();
-            serviceCollection.AddSingleton<LogicProjectGeneration>();
-            serviceCollection.AddSingleton<PersistenceProjectGeneration>();
-            serviceCollection.AddSingleton<DBProjectGeneration>();
+            ConfigureTools(serviceCollection);
 
-            serviceCollection.AddSingleton<DtoPropertyAddition>();
-            serviceCollection.AddSingleton<DtoAddition>();
-            serviceCollection.AddSingleton<EntityCoreAddition>();
+            ApiProjectGeneration.ConfigureServices(serviceCollection);
+            ContractLogicProjectGeneration.ConfigureServices(serviceCollection);
+            ContractPersistenceProjectGeneration.ConfigureServices(serviceCollection);
+            LogicProjectGeneration.ConfigureServices(serviceCollection);
+            LogicTestsProjectGeneration.ConfigureServices(serviceCollection);
+            PersistenceProjectGeneration.ConfigureServices(serviceCollection);
+            PersistenceTestsProjectGeneration.ConfigureServices(serviceCollection);
 
-            serviceCollection.AddSingleton<DtoDetailFromMethodsAddition>();
-            serviceCollection.AddSingleton<DtoDetailMethodsAddition>();
-            serviceCollection.AddSingleton<DtoDetailToMethodsAddition>();
-            serviceCollection.AddSingleton<DtoMethodsAddition>();
+            DBProjectGeneration.ConfigureServices(serviceCollection);
 
+            ModelProjectGeneration.ConfigureServices(serviceCollection);
+            PagesProjectGeneration.ConfigureServices(serviceCollection);
+        }
+
+        private static void ConfigureTools(IServiceCollection serviceCollection)
+        {
             serviceCollection.AddSingleton<DomainDependencyProvider>();
             serviceCollection.AddSingleton<EntityCoreDependencyProvider>();
 
-            serviceCollection.AddSingleton<LogicRelationAddition>();
+            serviceCollection.AddSingleton<ApiDtoPropertyAddition>();
+            serviceCollection.AddSingleton<DtoAddition>();
+            serviceCollection.AddSingleton<DtoPropertyAddition>();
+            serviceCollection.AddSingleton<DtoRelationAddition>();
+            serviceCollection.AddSingleton<EntityCoreAddition>();
 
-            serviceCollection.AddSingleton<DbContextEntityAddition>();
-            serviceCollection.AddSingleton<DbContextPropertyAddition>();
-            serviceCollection.AddSingleton<DbContextRelationToAddition>();
-            serviceCollection.AddSingleton<DbDtoMethodsAddition>();
-            serviceCollection.AddSingleton<DbDtoDetailMethodsAddition>();
-            serviceCollection.AddSingleton<DbDtoDetailFromMethodsAddition>();
-            serviceCollection.AddSingleton<DbDtoDetailToMethodsAddition>();
-            serviceCollection.AddSingleton<EfDtoContructorHashSetAddition>();
-            serviceCollection.AddSingleton<DtoFromRepositoryIncludeAddition>();
-            serviceCollection.AddSingleton<DtoToRepositoryIncludeAddition>();
+            serviceCollection.AddSingleton<FrontendPagesDomainCoreAddition>();
+            serviceCollection.AddSingleton<FrontendModelEntityCoreAddition>();
+            serviceCollection.AddSingleton<FrontendPagesEntityCoreAddition>();
+            serviceCollection.AddSingleton<FrontendDtoAddition>();
+            serviceCollection.AddSingleton<FrontendDtoPropertyAddition>();
+            serviceCollection.AddSingleton<FrontendDtoRelationAddition>();
+            serviceCollection.AddSingleton<FrontendDtoPropertyMethodAddition>();
 
-            serviceCollection.AddSingleton<DbProjectFileDomainAddition>();
-            serviceCollection.AddSingleton<DbProjectFileEntityAddition>();
-            serviceCollection.AddSingleton<DbTableAddition>();
-            serviceCollection.AddSingleton<DbTablePropertyAddition>();
-            serviceCollection.AddSingleton<DbTableRelationContraintAddition>();
+            serviceCollection.AddSingleton<EntitiesPageHtmlPropertyAddition>();
+            serviceCollection.AddSingleton<EntitiesPageTsPropertyAddition>();
 
             serviceCollection.AddSingleton<PathService>();
         }

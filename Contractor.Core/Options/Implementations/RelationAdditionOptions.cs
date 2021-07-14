@@ -1,21 +1,36 @@
 ﻿using Contractor.Core.Helpers;
 
-namespace Contractor.Core.Jobs
+namespace Contractor.Core.Options
 {
     public class RelationAdditionOptions : ContractorOptions, IRelationAdditionOptions
     {
-        public string DomainFrom { get; set; }
+        private string domainFrom;
+        private string entityNameFrom;
+        private string entityNamePluralFrom;
+        private string propertyNameFrom;
 
-        public string EntityNameFrom { get; set; }
+        private string domainTo;
+        private string entityNameTo;
+        private string entityNamePluralTo;
+        private string propertyNameTo;
 
-        public string EntityNamePluralFrom { get; set; }
+        public string DomainFrom
+        {
+            get { return domainFrom; }
+            set { domainFrom = value.ToVariableName(); }
+        }
 
-        public string DomainTo { get; set; }
+        public string EntityNameFrom
+        {
+            get { return entityNameFrom; }
+            set { entityNameFrom = value.ToVariableName(); }
+        }
 
-        public string EntityNameTo { get; set; }
-
-        public string EntityNamePluralTo { get; set; }
-
+        public string EntityNamePluralFrom
+        {
+            get { return entityNamePluralFrom; }
+            set { entityNamePluralFrom = value.ToVariableName(); }
+        }
         public string EntityNameLowerFrom
         {
             get
@@ -30,6 +45,36 @@ namespace Contractor.Core.Jobs
             {
                 return char.ToLower(EntityNamePluralFrom[0]) + EntityNamePluralFrom.Substring(1);
             }
+        }
+
+        public string PropertyNameFrom
+        {
+            get { return propertyNameFrom; }
+            set { propertyNameFrom = value.ToVariableName(); }
+        }
+
+        public string DomainTo
+        {
+            get { return domainTo; }
+            set { domainTo = value.ToVariableName(); }
+        }
+
+        public string EntityNameTo
+        {
+            get { return entityNameTo; }
+            set { entityNameTo = value.ToVariableName(); }
+        }
+
+        public string EntityNamePluralTo
+        {
+            get { return entityNamePluralTo; }
+            set { entityNamePluralTo = value.ToVariableName(); }
+        }
+
+        public string PropertyNameTo
+        {
+            get { return propertyNameTo; }
+            set { propertyNameTo = value.ToVariableName(); }
         }
 
         public string EntityNameLowerTo
@@ -54,6 +99,7 @@ namespace Contractor.Core.Jobs
 
         public RelationAdditionOptions(IContractorOptions options)
         {
+            this.FrontendDestinationFolder = options.FrontendDestinationFolder;
             this.BackendDestinationFolder = options.BackendDestinationFolder;
             this.DbDestinationFolder = options.DbDestinationFolder;
             this.DbProjectName = options.DbProjectName;
@@ -70,15 +116,15 @@ namespace Contractor.Core.Jobs
             };
         }
 
-        public static IPropertyAdditionOptions GetPropertyForFrom(IRelationAdditionOptions options, string propertyType, string propertyName)
+        internal static IRelationSideAdditionOptions GetPropertyForFrom(IRelationAdditionOptions options, string propertyType)
         {
-            return new PropertyAdditionOptions(options)
+            return new RelationSideAdditionOptions(options)
             {
                 Domain = options.DomainFrom,
                 EntityName = options.EntityNameFrom,
                 EntityNamePlural = options.EntityNamePluralFrom,
                 PropertyType = propertyType,
-                PropertyName = propertyName
+                PropertyName = options.PropertyNameTo,
             };
         }
 
@@ -92,15 +138,15 @@ namespace Contractor.Core.Jobs
             };
         }
 
-        public static IPropertyAdditionOptions GetPropertyForTo(IRelationAdditionOptions options, string propertyType, string propertyName)
+        internal static IRelationSideAdditionOptions GetPropertyForTo(IRelationAdditionOptions options, string propertyType)
         {
-            return new PropertyAdditionOptions(options)
+            return new RelationSideAdditionOptions(options)
             {
                 Domain = options.DomainTo,
                 EntityName = options.EntityNameTo,
                 EntityNamePlural = options.EntityNamePluralTo,
                 PropertyType = propertyType,
-                PropertyName = propertyName
+                PropertyName = options.PropertyNameFrom + (propertyType.Equals("Guid") ? "Id" : "")
             };
         }
 
@@ -109,15 +155,19 @@ namespace Contractor.Core.Jobs
             if (string.IsNullOrEmpty(options.DomainFrom) ||
                string.IsNullOrEmpty(options.EntityNameFrom) ||
                string.IsNullOrEmpty(options.EntityNamePluralFrom) ||
+               string.IsNullOrEmpty(options.PropertyNameFrom) ||
                string.IsNullOrEmpty(options.DomainTo) ||
                string.IsNullOrEmpty(options.EntityNameTo) ||
                string.IsNullOrEmpty(options.EntityNamePluralTo) ||
+               string.IsNullOrEmpty(options.PropertyNameTo) ||
                !options.DomainFrom.IsAlpha() ||
                !options.EntityNameFrom.IsAlpha() ||
                !options.EntityNamePluralFrom.IsAlpha() ||
+               !options.PropertyNameFrom.IsAlpha() ||
                !options.DomainTo.IsAlpha() ||
                !options.EntityNameTo.IsAlpha() ||
-               !options.EntityNamePluralTo.IsAlpha())
+               !options.EntityNamePluralTo.IsAlpha() ||
+               !options.PropertyNameTo.IsAlpha())
             {
                 return false;
             }
@@ -125,9 +175,11 @@ namespace Contractor.Core.Jobs
             options.DomainFrom = options.DomainFrom.UpperFirstChar();
             options.EntityNameFrom = options.EntityNameFrom.UpperFirstChar();
             options.EntityNamePluralFrom = options.EntityNamePluralFrom.UpperFirstChar();
+            options.PropertyNameFrom = options.PropertyNameFrom.UpperFirstChar();
             options.DomainTo = options.DomainTo.UpperFirstChar();
             options.EntityNameTo = options.EntityNameTo.UpperFirstChar();
             options.EntityNamePluralTo = options.EntityNamePluralTo.UpperFirstChar();
+            options.PropertyNameTo = options.PropertyNameTo.UpperFirstChar();
 
             return true;
         }

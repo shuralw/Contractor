@@ -1,0 +1,13 @@
+import { ApiEntity } from './api/api-entity-kebab';
+
+export interface IEntity {
+    id: string;
+}
+
+export class Entity {
+    public static fromApiEntity(apiEntity: ApiEntity): IEntity {
+        return {
+            id: apiEntity.id,
+        };
+    }
+}

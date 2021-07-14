@@ -1,0 +1,15 @@
+﻿using System;
+
+namespace ProjectName.Persistence.Modules.Domain.Entities
+{
+    public class EfEntity
+    {
+        public EfEntity()
+        {
+        }
+
+        public Guid Id { get; set; }
+
+        public Guid RequestScopeId { get; set; }
+    }
+}

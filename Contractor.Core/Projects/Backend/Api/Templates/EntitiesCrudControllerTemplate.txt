@@ -1,0 +1,68 @@
+﻿using ProjectName.API.Security.Authorization;
+using ProjectName.Contract.Logic.LogicResults;
+using ProjectName.Contract.Logic.Modules.Domain.Entities;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+
+namespace ProjectName.API.Modules.Domain.Entities
+{
+    [ApiController]
+    [Route("api/domain-kebab/entity-kebab")]
+    public class EntitiesCrudController : ControllerBase
+    {
+        private readonly IEntitiesCrudLogic entitiesCrudLogic;
+
+        public EntitiesCrudController(IEntitiesCrudLogic entitiesCrudLogic)
+        {
+            this.entitiesCrudLogic = entitiesCrudLogic;
+        }
+
+        [HttpGet]
+        [Authorized]
+        public ActionResult<IEnumerable<IEntity>> GetEntities()
+        {
+            var getEntitiesResult = this.entitiesCrudLogic.GetEntities();
+            return this.FromLogicResult(getEntitiesResult);
+        }
+
+        [HttpGet]
+        [Authorized]
+        [Route("{entityId}")]
+        public ActionResult<IEntityDetail> GetEntityDetail(Guid entityId)
+        {
+            var getEntityDetailResult = this.entitiesCrudLogic.GetEntityDetail(entityId);
+            return this.FromLogicResult(getEntityDetailResult);
+        }
+
+        [HttpPost]
+        [Authorized]
+        public ActionResult<DataBody<Guid>> CreateEntity([FromBody] EntityCreate entityCreate)
+        {
+            ILogicResult<Guid> createEntityResult = this.entitiesCrudLogic.CreateEntity(entityCreate);
+            if (!createEntityResult.IsSuccessful)
+            {
+                return this.FromLogicResult(createEntityResult);
+            }
+
+            return this.Ok(new DataBody<Guid>(createEntityResult.Data));
+        }
+
+        [HttpPut]
+        [Authorized]
+        public ActionResult UpdateEntity([FromBody] EntityUpdate entityUpdate)
+        {
+            ILogicResult updateEntityResult = this.entitiesCrudLogic.UpdateEntity(entityUpdate);
+            return this.FromLogicResult(updateEntityResult);
+        }
+
+        [HttpDelete]
+        [Authorized]
+        [Route("{entityId}")]
+        public ActionResult DeleteEntity(Guid entityId)
+        {
+            ILogicResult deleteEntityResult = this.entitiesCrudLogic.DeleteEntity(entityId);
+            return this.FromLogicResult(deleteEntityResult);
+        }
+    }
+}

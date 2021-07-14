@@ -1,0 +1,13 @@
+import { ApiEntityDetail } from './api/api-entity-kebab-detail';
+
+export interface IEntityDetail {
+    id: string;
+}
+
+export abstract class EntityDetail {
+    public static fromApiEntityDetail(apiEntityDetail: ApiEntityDetail): IEntityDetail {
+        return {
+            id: apiEntityDetail.id,
+        };
+    }
+}

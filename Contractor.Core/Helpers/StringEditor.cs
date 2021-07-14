@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Contractor.Core.Helpers
 {
-    public class StringEditor
+    internal class StringEditor
     {
         private int lineNumber;
         private readonly List<string> lines;
@@ -22,6 +22,16 @@ namespace Contractor.Core.Helpers
             return this.lines[lineNumber];
         }
 
+        public string GetLineAtOffset(int offset)
+        {
+            return this.lines[lineNumber + offset];
+        }
+
+        public int GetLineCount()
+        {
+            return this.lines.Count;
+        }
+
         public int GetLineNumber()
         {
             return lineNumber;
@@ -30,6 +40,26 @@ namespace Contractor.Core.Helpers
         public string GetText()
         {
             return string.Join("\r\n", this.lines);
+        }
+
+        public void AddPrefixBetweenLinesThatContain(string prefix, string startThatContains, string endThatContains)
+        {
+            var startLineNumber = this.lineNumber;
+
+            this.MoveToStart();
+            this.NextThatContains(startThatContains);
+            this.Next();
+
+            while (this.lineNumber < lines.Count() && !this.lines[lineNumber].Contains(endThatContains))
+            {
+                if (this.lines[lineNumber].Trim().Count() > 0)
+                {
+                    this.lines[lineNumber] = prefix + this.lines[lineNumber];
+                }
+                this.lineNumber++;
+            }
+
+            this.lineNumber = startLineNumber;
         }
 
         public StringEditor InsertLine(string line)
@@ -58,6 +88,11 @@ namespace Contractor.Core.Helpers
         public void MoveToEnd()
         {
             this.lineNumber = this.lines.Count - 1;
+        }
+
+        public void MoveToStart()
+        {
+            this.lineNumber = 0;
         }
 
         public StringEditor Next(Predicate<string> predicate)
@@ -114,9 +149,9 @@ namespace Contractor.Core.Helpers
             return this;
         }
 
-        public StringEditor PrevThatContains(string pattern)
+        public StringEditor PrevThatContains(params string[] patterns)
         {
-            this.Prev((line) => line.Contains(pattern));
+            this.Prev((line) => patterns.Any(pattern => line.Contains(pattern)));
 
             return this;
         }

@@ -1,14 +1,25 @@
 ﻿using Contractor.Core.Helpers;
 
-namespace Contractor.Core.Jobs
+namespace Contractor.Core.Options
 {
     public class EntityAdditionOptions : DomainAdditionOptions, IEntityAdditionOptions
     {
-        public string EntityName { get; set; }
 
-        public string EntityNamePlural { get; set; }
+        private string entityName;
 
-        public bool ForMandant { get; set; }
+        private string entityNamePlural;
+        
+        private string requestScopeDomain;
+
+        private string requestScopeName;
+
+        private string requestScopeNamePlural;
+
+        public string EntityName
+        {
+            get { return entityName; }
+            set { entityName = value.ToVariableName(); }
+        }
 
         public string EntityNameLower
         {
@@ -18,12 +29,52 @@ namespace Contractor.Core.Jobs
             }
         }
 
+        public string EntityNamePlural
+        {
+            get { return entityNamePlural; }
+            set { entityNamePlural = value.ToVariableName(); }
+        }
+
         public string EntityNamePluralLower
         {
             get
             {
                 return char.ToLower(EntityNamePlural[0]) + EntityNamePlural.Substring(1);
             }
+        }
+
+        public bool HasRequestScope
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(RequestScopeName) && !string.IsNullOrEmpty(RequestScopeNamePlural);
+            }
+        }
+
+        public string RequestScopeDomain
+        {
+            get { return requestScopeDomain; }
+            set { requestScopeDomain = value?.ToVariableName(); }
+        }
+
+        public string RequestScopeName
+        {
+            get { return requestScopeName; }
+            set { requestScopeName = value?.ToVariableName(); }
+        }
+
+        public string RequestScopeNameLower
+        {
+            get
+            {
+                return char.ToLower(RequestScopeName[0]) + RequestScopeName.Substring(1);
+            }
+        }
+
+        public string RequestScopeNamePlural
+        {
+            get { return requestScopeNamePlural; }
+            set { requestScopeNamePlural = value?.ToVariableName(); }
         }
 
         public EntityAdditionOptions()
@@ -42,7 +93,9 @@ namespace Contractor.Core.Jobs
         {
             this.EntityName = options.EntityName;
             this.EntityNamePlural = options.EntityNamePlural;
-            this.ForMandant = options.ForMandant;
+            this.RequestScopeDomain = options.RequestScopeDomain;
+            this.RequestScopeName = options.RequestScopeName;
+            this.RequestScopeNamePlural = options.RequestScopeNamePlural;
         }
 
         public static bool Validate(IEntityAdditionOptions options)

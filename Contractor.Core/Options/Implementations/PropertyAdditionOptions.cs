@@ -1,14 +1,22 @@
 ﻿using Contractor.Core.Helpers;
 
-namespace Contractor.Core.Jobs
+namespace Contractor.Core.Options
 {
     public class PropertyAdditionOptions : EntityAdditionOptions, IPropertyAdditionOptions
     {
-        public string PropertyType { get; set; }
+        private string propertyName;
 
-        public string PropertyName { get; set; }
+        public PropertyTypes PropertyType { get; set; }
+
+        public string PropertyName
+        {
+            get { return propertyName; }
+            set { propertyName = value.ToVariableName(); }
+        }
 
         public string PropertyTypeExtra { get; set; }
+
+        public bool IsOptional { get; set; } = false;
 
         public PropertyAdditionOptions()
         {
@@ -31,13 +39,25 @@ namespace Contractor.Core.Jobs
             this.PropertyType = options.PropertyType;
             this.PropertyName = options.PropertyName;
             this.PropertyTypeExtra = options.PropertyTypeExtra;
+            this.IsOptional = options.IsOptional;
+        }
+
+        internal PropertyAdditionOptions(IRelationSideAdditionOptions options) : base(options)
+        {
+            this.PropertyName = options.PropertyName;
+            this.IsOptional = options.IsOptional;
+            switch (options.PropertyType)
+            {
+                case "Guid":
+                    this.PropertyType = PropertyTypes.Guid;
+                    break;
+            };
         }
 
         public static bool Validate(IPropertyAdditionOptions options)
         {
             if (!EntityAdditionOptions.Validate(options) ||
                string.IsNullOrEmpty(options.PropertyName) ||
-               string.IsNullOrEmpty(options.PropertyType) ||
                !options.PropertyName.IsAlpha())
             {
                 return false;

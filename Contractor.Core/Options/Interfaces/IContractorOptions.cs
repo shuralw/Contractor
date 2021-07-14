@@ -1,10 +1,12 @@
-﻿namespace Contractor.Core.Jobs
+﻿namespace Contractor.Core.Options
 {
     public interface IContractorOptions
     {
         string BackendDestinationFolder { get; set; }
 
         string DbDestinationFolder { get; set; }
+
+        string FrontendDestinationFolder { get; set; }
 
         string ProjectName { get; set; }
 

@@ -1,10 +1,15 @@
 ﻿using Contractor.Core.Helpers;
 
-namespace Contractor.Core.Jobs
+namespace Contractor.Core.Options
 {
     public class DomainAdditionOptions : ContractorOptions, IDomainAdditionOptions
     {
-        public string Domain { get; set; }
+        private string domain;
+
+        public string Domain {
+            get { return domain; }
+            set { domain = value.ToVariableName(); } 
+        }
 
         public DomainAdditionOptions()
         {

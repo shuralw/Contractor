@@ -2,7 +2,7 @@
 
 namespace Contractor.CLI
 {
-    public class ContractorHelp
+    internal class ContractorHelp
     {
         public static void WriteHelp()
         {
@@ -11,9 +11,9 @@ namespace Contractor.CLI
                 @"Commands:
 contractor init [-y]
 contractor add domain Bankwesen
-contractor add entity Bankwesen.Bank:Banken [-m | --for-mandant]
-contractor add property string:256 Name -e Bankwesen.Bank:Banken
-contractor add relation 1:n Bankwesen.Bank:Banken Kundenstamm.Kunde:Kunden
+contractor add entity Bankwesen.Bank:Banken [-s|--scope Mandant:Mandanten]
+contractor add property string:256 Name -e Bankwesen.Bank:Banken [-o|--optional]
+contractor add relation 1:n Bankwesen.Bank:Banken Kundenstamm.Kunde:Kunden [-n|--alternative-property-names Vertragsbank:Vertragskunden]
             ");
         }
     }

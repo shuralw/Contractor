@@ -1,11 +1,13 @@
-﻿namespace Contractor.Core.Jobs
+﻿namespace Contractor.Core.Options
 {
     public interface IPropertyAdditionOptions : IEntityAdditionOptions
     {
-        string PropertyType { get; set; }
+        PropertyTypes PropertyType { get; set; }
 
         string PropertyName { get; set; }
 
         string PropertyTypeExtra { get; set; }
+
+        bool IsOptional { get; set; }
     }
 }

@@ -1,0 +1,20 @@
+import { ApiEntityUpdate } from './api/api-entity-kebab-update';
+import { IEntityDetail } from './i-entity-kebab-detail';
+
+export interface IEntityUpdate {
+    id: string;
+}
+
+export abstract class EntityUpdate {
+    public static toApiEntityUpdate(iEntityUpdate: IEntityUpdate): ApiEntityUpdate {
+        return {
+            id: iEntityUpdate.id,
+        };
+    }
+
+    public static fromEntityDetail(iEntityDetail: IEntityDetail): IEntityUpdate {
+        return {
+            id: iEntityDetail.id,
+        };
+    }
+}

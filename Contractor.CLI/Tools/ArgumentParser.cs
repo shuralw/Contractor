@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Contractor.CLI.Tools
 {
-    public static class ArgumentParser
+    internal static class ArgumentParser
     {
         public static bool HasArgument(string[] args, params string[] argumentAlternatives)
         {

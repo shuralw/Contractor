@@ -1,10 +1,10 @@
-﻿using Contractor.Core.Jobs;
+﻿using Contractor.Core.Options;
 using Newtonsoft.Json;
 using System.IO;
 
 namespace Contractor.CLI
 {
-    public class ContractorOptionsLoader
+    internal class ContractorOptionsLoader
     {
         public static IContractorOptions Load(string folder)
         {
@@ -13,6 +13,7 @@ namespace Contractor.CLI
             ContractorOptions options = JsonConvert.DeserializeObject<ContractorOptions>(optionsJson);
             options.BackendDestinationFolder = Path.Combine(folder, options.BackendDestinationFolder);
             options.DbDestinationFolder = Path.Combine(folder, options.DbDestinationFolder);
+            options.FrontendDestinationFolder = Path.Combine(folder, options.FrontendDestinationFolder);
             return options;
         }
     }

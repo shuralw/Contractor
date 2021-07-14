@@ -1,4 +1,4 @@
-﻿using Contractor.Core.Jobs;
+﻿using Contractor.Core.Options;
 
 namespace Contractor.Core.Tools
 {
@@ -6,9 +6,9 @@ namespace Contractor.Core.Tools
     {
         public static string GetFileNameForEntityAddition(IEntityAdditionOptions options, string originalTemplateFileName)
         {
-            if (options.ForMandant)
+            if (options.HasRequestScope)
             {
-                originalTemplateFileName = originalTemplateFileName.Replace(".txt", "-Mandant.txt");
+                originalTemplateFileName = originalTemplateFileName.Replace(".txt", "-RequestScope.txt");
             }
 
             return originalTemplateFileName;
